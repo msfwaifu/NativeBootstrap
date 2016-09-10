@@ -224,7 +224,9 @@
     <None Include="NativeBootstrap.licenseheader" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="Source\Bootstrap\x64Stackalign.asm" />
+    <MASM Include="Source\Bootstrap\x64Stackalign.asm">
+      <ExcludedFromBuild Condition="'$(Platform)'!='x64'">true</ExcludedFromBuild>
+    </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
