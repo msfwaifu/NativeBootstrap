@@ -120,7 +120,7 @@ void InstallCallback()
     }
 
     // Commandline switch for TLS callback.
-    if (std::strstr(GetCommandLineA(), "-TLSCB"))
+    if (std::strstr(GetCommandLineA(), "-TLSCB") && GrabTLSCallback())
     {
         OriginalTLS = *(size_t *)GrabTLSCallback();
         *(size_t *)GrabTLSCallback() = size_t(TLSCallback);
