@@ -21,6 +21,11 @@ void LoadExtensions()
 {
     WIN32_FIND_DATA FileData;
     HANDLE FileHandle;
+
+    // Avoid overwriting the extensions.
+    static bool Initialized = false;
+    if (Initialized) return;
+    Initialized = true;
     
     // Find the first extension.
     FileHandle = FindFirstFileA(Searchpath, &FileData);
