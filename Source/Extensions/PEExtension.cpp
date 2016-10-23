@@ -13,7 +13,7 @@
 #include <Extensions\ExtensionLoader.h>
 #include <Bootstrap\Entrypointreplacement.h>
 
-constexpr const char *Searchpath = (sizeof(void *) == 8 ? "./Plugins/*.Ayria64" : "./Plugins/*.Ayria32");
+constexpr const char *Searchpath = (sizeof(void *) == 8 ? "./Plugins/*.ayria64" : "./Plugins/*.ayria32");
 std::vector<IExtension> ExtensionList;
 
 // Load and unload the extensions.
