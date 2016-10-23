@@ -13,7 +13,7 @@
 #include <Extensions\ExtensionLoader.h>
 #include <Bootstrap\Entrypointreplacement.h>
 
-constexpr const char *Searchpath = (sizeof(void *) == 8 ? ".\\Plugins\\*.Ayria64" : ".\\Plugins\\*.Ayria32");
+constexpr const char *Searchpath = (sizeof(void *) == 8 ? "./Plugins/*.Ayria64" : "./Plugins/*.Ayria32");
 std::vector<IExtension> ExtensionList;
 
 // Load and unload the extensions.
@@ -38,12 +38,12 @@ void LoadExtensions()
     do
     {
         // Load the extensions into process memory.
-        HMODULE Library = LoadLibraryA((".\\Plugins\\" + std::string(FileData.cFileName)).c_str());
+        HMODULE Library = LoadLibraryA(("./Plugins/" + std::string(FileData.cFileName)).c_str());
 
         if (Library)
         {
             IExtension Extension;
-            strncpy_s(Extension.Name, 65, (".\\Plugins\\" + std::string(FileData.cFileName)).c_str(), 64);
+            strncpy_s(Extension.Name, 65, ("./Plugins/" + std::string(FileData.cFileName)).c_str(), 64);
             Extension.onExtensionUnloading = (void (__cdecl *)(void))GetProcAddress(Library, "onExtensionUnloading");
             Extension.onInitializationStart = (void (__cdecl *)(void))GetProcAddress(Library, "onInitializationStart");
             Extension.onInitializationComplete = (void (__cdecl *)(void))GetProcAddress(Library, "onInitializationComplete");
