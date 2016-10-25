@@ -20,27 +20,16 @@ extern "C" size_t OriginalEP = 0;
 extern "C" void ASM_Stackalign();
 
 // Make the application writable.
-bool Unprotectmodule()
+void Protectrange(void *Address, const size_t Length, unsigned long Oldprotect)
 {
-    HMODULE Module = GetModuleHandleA(NULL);
-    if (!Module) return false;
-
-    PIMAGE_DOS_HEADER DOSHeader = (PIMAGE_DOS_HEADER)Module;
-    PIMAGE_NT_HEADERS NTHeader = (PIMAGE_NT_HEADERS)((DWORD_PTR)Module + DOSHeader->e_lfanew);
-    SIZE_T Size = NTHeader->OptionalHeader.SizeOfImage;
-    DWORD Original = 0;
-    LPCVOID End = (LPCVOID)((LPCSTR)Module + Size);
-    LPCVOID Addr = Module;
-    MEMORY_BASIC_INFORMATION Info;
-
-    while (Addr < End && VirtualQuery(Addr, &Info, sizeof(Info)) == sizeof(Info))
-    {
-        VirtualProtect(Info.BaseAddress, Info.RegionSize, PAGE_EXECUTE_READWRITE, &Original);
-
-        Addr = (LPCVOID)((LPCSTR)Info.BaseAddress + Info.RegionSize);
-    }
-
-    return true;
+    unsigned long Temp;
+    VirtualProtect(Address, Length, Oldprotect, &Temp);
+}
+unsigned long Unprotectrange(void *Address, const size_t Length)
+{
+    unsigned long Oldprotect;
+    VirtualProtect(Address, Length, PAGE_EXECUTE_READWRITE, &Oldprotect);
+    return Oldprotect;
 }
 
 // Read the applications entrypoint and TLS address.
@@ -77,8 +66,14 @@ void BootstrapCallback()
     // Set the returnpath for normal bootstrap.
     if (0 == OriginalTLS)
     {
+	// Remove the protection from the entrypoint.
+	auto Protection = Unprotectrange((void *)OriginalEP, 20);
+	    
         // Restore the entrypoint data.
         std::memcpy((void *)OriginalEP, OriginalCode, 20);
+	    
+	// Restore the protection.
+	Protectrange((void *)OriginalEP, 20, Protection);
     
 #ifdef _WIN64
         // x64 needs some stack alignment.
@@ -89,9 +84,8 @@ void BootstrapCallback()
 #endif
 
         // While AyriaPlatform or similar plugin should call this,
-	    // we have to make sure it gets called at some point.
-	    std::thread([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); FinalizeExtensions(); }).detach();
-
+	// we have to make sure it gets called at some point.
+	std::thread([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); FinalizeExtensions(); }).detach();
     }
 
     // Return to the address specified above.
@@ -113,7 +107,7 @@ void __stdcall TLSCallback(PVOID Module, DWORD Reason, PVOID Context)
 void InstallCallback()
 {
     // Sanity checking, maybe we're in an ELF file?
-    if (!Unprotectmodule() || (OriginalEP = GrabEntrypoint()) == 0)
+    if ((OriginalEP = GrabEntrypoint()) == 0)
     {
         DebugPrint("The bootstrapper could not access the host applications image.");
         return;
@@ -127,6 +121,9 @@ void InstallCallback()
     }
     else
     {
+	// Remove the protection from the entrypoint.
+	auto Protection = Unprotectrange((void *)OriginalEP, 20);
+	    
         // Backup the entrypoint.
         std::memcpy(OriginalCode, (void *)OriginalEP, 20);
 
@@ -141,6 +138,9 @@ void InstallCallback()
         *(uint8_t *)(OriginalEP + 0) = 0xE9;                   // jmp
         *(size_t *)(OriginalEP + 1) = ((size_t)BootstrapCallback - (OriginalEP + 5));
 #endif
+	
+	// Restore the protection.
+	Protectrange((void *)OriginalEP, 20, Protection);
     }
 }
 
