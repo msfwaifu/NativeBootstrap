@@ -84,8 +84,8 @@ void BootstrapCallback()
 #endif
 
         // While AyriaPlatform or similar plugin should call this,
-	// we have to make sure it gets called at some point.
-	std::thread([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); FinalizeExtensions(); }).detach();
+        // we have to make sure it gets called at some point.
+        std::thread([]() { std::this_thread::sleep_for(std::chrono::seconds(3)); FinalizeExtensions(); }).detach();
     }
 
     // Return to the address specified above.
