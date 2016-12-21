@@ -18,6 +18,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="NativeBootstrap.licenseheader" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Extensions\PEManager.h" />
+    <ClInclude Include="Source\Extensions\Plugin.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6B841E0A-BDDB-48C0-928D-9CE7E064A5D8}</ProjectGuid>
     <RootNamespace>NativeBootstrap</RootNamespace>
