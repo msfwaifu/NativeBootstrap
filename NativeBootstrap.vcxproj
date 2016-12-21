@@ -201,33 +201,6 @@
       </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\Bootstrap\Entrypointreplacement.h" />
-    <ClInclude Include="Source\Defines.h" />
-    <ClInclude Include="Source\Extensions\ExtensionLoader.h" />
-    <ClInclude Include="Source\Extensions\Interface.h" />
-    <ClInclude Include="Source\Macros.h" />
-    <ClInclude Include="Source\Utilities\All.h" />
-    <ClInclude Include="Source\Utilities\Cryptography\Hashing\FNV1.h" />
-    <ClInclude Include="Source\Utilities\FileIO\CSVManager.h" />
-    <ClInclude Include="Source\Utilities\Strings\Debugstring.h" />
-    <ClInclude Include="Source\Utilities\Strings\VariadicString.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Source\Bootstrap\PEReplacement.cpp" />
-    <ClCompile Include="Source\DllMain.cpp" />
-    <ClCompile Include="Source\Extensions\PEExtension.cpp" />
-    <ClCompile Include="Source\Utilities\FileIO\CSVManager.cpp" />
-    <ClCompile Include="Source\Utilities\Strings\VariadicString.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="NativeBootstrap.licenseheader" />
-  </ItemGroup>
-  <ItemGroup>
-    <MASM Include="Source\Bootstrap\x64Stackalign.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'!='x64'">true</ExcludedFromBuild>
-    </MASM>
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
